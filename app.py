@@ -13,6 +13,7 @@ import streamlit as st
 from subscription_analytics.dashboard_data import (
     build_filtered_connection,
     dashboard_options,
+    ensure_demo_warehouse,
     full_quality_results,
     normalize_date,
     series_frame,
@@ -61,6 +62,14 @@ def safe_forecasts(series: pd.Series) -> tuple[pd.DataFrame | None, pd.DataFrame
 st.title("Subscription Product Analytics")
 st.caption("Growth, monetization and retention · illustrative subscription app")
 st.markdown('<div class="synthetic-note"><strong>Synthetic demo data.</strong> Figures and experiment effects are generated for this project and do not represent real company performance.</div>', unsafe_allow_html=True)
+
+if not DB_PATH.is_file():
+    with st.spinner("Preparing the synthetic demo dataset on first launch…"):
+        try:
+            ensure_demo_warehouse(DB_PATH)
+        except Exception as exc:
+            st.error(f"Could not prepare the demo dataset: {exc}")
+            st.stop()
 
 problem = warehouse_status(DB_PATH)
 if problem:

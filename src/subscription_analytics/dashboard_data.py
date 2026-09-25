@@ -46,6 +46,21 @@ def warehouse_status(db_path: Path) -> str | None:
     return None
 
 
+def ensure_demo_warehouse(db_path: Path) -> None:
+    """Create the reproducible demo warehouse when running from a clean checkout."""
+    db_path = Path(db_path).expanduser()
+    if db_path.is_file():
+        return
+
+    from .config import DEFAULT_DAYS, DEFAULT_SEED, DEFAULT_USERS
+    from .generate import generate_dataset
+    from .warehouse import build_warehouse
+
+    raw_dir = db_path.parent / "raw"
+    generate_dataset(raw_dir, seed=DEFAULT_SEED, n_users=DEFAULT_USERS, days=DEFAULT_DAYS)
+    build_warehouse(raw_dir, db_path)
+
+
 def _filtered_users_query(channel: str | None, country: str | None, device: str | None) -> tuple[str, list[Any]]:
     clauses = ["1=1"]
     params: list[Any] = []

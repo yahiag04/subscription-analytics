@@ -90,9 +90,15 @@ From the project directory:
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -e '.[dev]'
-python -m subscription_analytics.cli build --output data --seed 42 --users 5000 --days 180
 streamlit run app.py
 \end{verbatim}
+If the DuckDB warehouse is missing, the app generates the default synthetic dataset and builds the warehouse on first launch. To build it explicitly before starting the dashboard, run:
+\begin{verbatim}
+python -m subscription_analytics.cli build --output data --seed 42 --users 5000 --days 180
+\end{verbatim}
+
+\section{Cloud Deployment}
+The project can be deployed from GitHub using Streamlit Community Cloud. Select the repository, branch \texttt{main}, and entrypoint \texttt{app.py}. The deployment installs runtime dependencies from \texttt{requirements.txt}; on first launch, the app creates its synthetic demo data and DuckDB warehouse automatically. No secrets or external services are required.
 
 \vfill
 \noindent\footnotesize The Bending Spoons logo is included to identify the application context; it is a trademark of its respective owner. The vector artwork was obtained from the official website: \url{https://bendingspoons.com/}.

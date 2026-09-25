@@ -17,6 +17,12 @@ streamlit run app.py
 
 The build command writes five CSVs under `data/raw/` and creates `data/warehouse.duckdb`. It prints table row counts and runs quality checks. The `quality` command exits nonzero if a blocking check fails. Use `--help` on either command for options. The random seed and simulation end date are fixed for reproducibility; the onboarding treatment has a simulated +3 percentage-point trial-conversion lift by default.
 
+If the warehouse is missing when the dashboard starts, the app generates the default synthetic dataset and builds it automatically. This also makes a clean checkout ready to run without a manual data setup step.
+
+## Deploy
+
+The app is ready for Streamlit Community Cloud. Create an app from this GitHub repository, select branch `main` and entrypoint `app.py`. The first launch generates the synthetic data and DuckDB warehouse automatically; no secrets or external services are required.
+
 ## Pipeline and warehouse
 
 The generator creates users, session/content/feature events, subscription lifecycles, daily acquisition spend, and randomized onboarding assignments. The DuckDB pipeline preserves three layers:
