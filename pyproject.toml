@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "subscription-analytics-platform"
+version = "0.1.0"
+description = "Synthetic subscription product analytics and forecasting demo"
+requires-python = ">=3.11"
+dependencies = [
+  "duckdb>=1.3,<2",
+  "numpy>=2.0,<3",
+  "pandas>=2.2,<3",
+  "plotly>=5.24,<7",
+  "scipy>=1.14,<2",
+  "streamlit>=1.50,<2",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8,<10"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

@@ -1,0 +1,10 @@
+pyproject.toml
+src/subscription_analytics/__init__.py
+src/subscription_analytics/config.py
+src/subscription_analytics/generate.py
+src/subscription_analytics_platform.egg-info/PKG-INFO
+src/subscription_analytics_platform.egg-info/SOURCES.txt
+src/subscription_analytics_platform.egg-info/dependency_links.txt
+src/subscription_analytics_platform.egg-info/requires.txt
+src/subscription_analytics_platform.egg-info/top_level.txt
+tests/test_generate.py

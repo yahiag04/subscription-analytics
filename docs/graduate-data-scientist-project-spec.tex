@@ -1,0 +1,99 @@
+\documentclass[a4paper,11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage[margin=2.3cm]{geometry}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=black,urlcolor=blue}
+\begin{document}
+\begin{center}
+  \includegraphics[width=.40\textwidth]{assets/bending-spoons-logotype.pdf}
+  \par\vspace{1.2cm}
+  {\LARGE Subscription Product Analytics\par}
+  \vspace{.3cm}
+  {\large Project Specification\par}
+  \vspace{.8cm}
+  {\large Yahia Ghallale\par}
+  {\large Graduate Data Scientist position\par}
+  \vspace{.5cm}
+  {25 September 2026\par}
+\end{center}
+\begin{center}
+\small Project demonstration prepared as part of the application. \\
+All data and results in this document are synthetic and do not describe Bending Spoons.
+\end{center}
+
+\section{Problem Statement}
+Subscription products generate signals across events, users, subscriptions, billing, acquisition, and experiments. Without a consistent data foundation, teams risk making decisions from incomparable metrics, immature cohorts, or forecasts that have not been evaluated on future periods.
+
+This application demonstrates a reproducible analytics workflow that brings these sources together, defines metrics explicitly, and makes data quality visible. It helps a product team investigate engagement, conversion, churn, revenue, acquisition, and experiment impact.
+
+\section{What the Application Does}
+\begin{itemize}
+  \item Generates a deterministic sample dataset for a subscription app: users, events, subscriptions, acquisition spend, and experiment assignments.
+  \item Transforms CSV inputs into a three-layer DuckDB warehouse (\texttt{raw}, \texttt{clean}, \texttt{mart}), preserving the source layer and removing exact duplicate rows from the clean layer.
+  \item Checks required tables, duplicate keys, required fields, impossible dates, and missing or inconsistent invoices.
+  \item Presents an interactive dashboard with date, channel, country, and device filters, KPIs, time series, and cohort analysis.
+  \item Compares baseline forecasts (seasonal naive, moving average, and linear trend) using temporal backtesting and MAE/MAPE metrics.
+  \item Analyses an A/B test using mature conversions, confidence intervals, a statistical test, power, and minimum detectable effect (MDE).
+\end{itemize}
+
+\section{Requirements}
+\subsection{Functional Requirements}
+\begin{enumerate}
+  \item Generate reproducible data from a configurable random seed.
+  \item Build and query a local analytical warehouse.
+  \item Flag anomalies that could invalidate metric interpretation.
+  \item Calculate product metrics and segment the dashboard using shared filters.
+  \item Compare forecasting methods with chronological backtests that avoid temporal leakage.
+  \item Communicate experiment uncertainty and make recommendations proportionate to the evidence.
+\end{enumerate}
+\subsection{Non-functional Requirements and Constraints}
+\begin{itemize}
+  \item Run locally with Python 3.11+, Streamlit, and DuckDB; no cloud service is required.
+  \item Keep generation, warehouse, quality, metrics, forecasting, experimentation, and presentation in separate modules.
+  \item Keep the pipeline and analyses deterministic for reproducibility and review.
+  \item Use synthetic data only; no personal information or real company data is included.
+\end{itemize}
+
+\section{Metrics and Assumptions}
+DAU/WAU/MAU count distinct active users over rolling 1/7/30-day windows. Trial-to-paid conversion includes only trials whose full seven-day observation window has elapsed. Period churn divides effective cancellations by paid subscriptions active at the beginning of the period. Cohort retention considers a user active when they have at least one event in a month. LTV is an estimate based on monthly ARPU, an assumed 80\% gross margin, and estimated monthly churn; it is not an observed value. Acquisition spend in filtered segments is allocated in proportion to selected signups for the corresponding channel and day.
+
+The demo simplifies monthly billing, prices, and acquisition costs. It does not model refunds, taxes, app-store fees, currencies, or reactivations. Forecasts are interpretable baselines, not promises of future performance.
+
+\section{Architecture}
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+Component & Responsibility \\
+\midrule
+Generator & Deterministic synthetic data and scenario consistency \\
+DuckDB warehouse & Raw/clean/mart layers and analytical facts/dimensions \\
+Data quality checks & Explicit validations and failure samples \\
+Metrics and analysis & KPIs, retention, forecast backtests, A/B inference \\
+Streamlit & Filters, charts, tables, and decision-focused summaries \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Example Results Interpretation}
+With the default seed 42, the warehouse contains 5,000 users, 665,480 clean events, and 9,276 synthetic invoices. In the onboarding experiment, among users with a mature observation window, control conversion is 59.13\% (n=2,420) and treatment conversion is 60.30\% (n=2,373): absolute lift +1.17 percentage points, 95\% CI from $-1.61$ to $+3.94$ points, $p=0.409$, estimated power 13.1\%, and MDE of about 3.94 points.
+
+The demo recommendation is to extend the experiment before deciding: the current sample cannot reliably distinguish a useful effect from no effect. This is an illustrative recommendation based on simulated data, not a conclusion about a real product.
+
+\section{Run Instructions}
+From the project directory:
+\begin{verbatim}
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -e '.[dev]'
+python -m subscription_analytics.cli build --output data --seed 42 --users 5000 --days 180
+streamlit run app.py
+\end{verbatim}
+
+\vfill
+\noindent\footnotesize The Bending Spoons logo is included to identify the application context; it is a trademark of its respective owner. The vector artwork was obtained from the official website: \url{https://bendingspoons.com/}.
+\end{document}
